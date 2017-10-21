@@ -5,6 +5,9 @@ white =      '#ffffff'
 red =        '#ff0000'
 green =      '#00ff00'
 blue =       '#0000ff'
+yellow =     '#FFF63D'
+orange =     '#FF711A'
+brown =      '#732C00'
 
 def random_colour():
     return '#'+str(hex(np.random.randint(0xffffff)))[2:]
@@ -22,9 +25,9 @@ def vector_to_colour(vector):
     return '#'+''.join( tuple( pad_number(hex(int(round(vector[i]))))[2:] for i in range(len(vector))))
 
 class SmoothHue:
-    def __init__(self, min_value, max_value, colours=[white, black]):
-        self.min_value = min_value
-        self.max_value = max_value
+    def __init__(self, pinned_values, colours):
+        assert(len(pinned_values)==len(colours))
+        self.pinned_values = pinned_values
         self.colours = colours
         self.colour_vectors = [colour_to_vector(colours[i]) for i in range(len(colours))]
         self.distances = [np.linalg.norm(self.colour_vectors[i]-self.colour_vectors[i+1]) for i in range(len(colours)-1)]
@@ -32,18 +35,18 @@ class SmoothHue:
 
     def get_colour(self, value):
         # assuming linear rate along path
-        assert(value>=self.min_value)
-        assert(value<=self.max_value)
-        distance = self.total_distance*(value-self.min_value)/float(self.max_value-self.min_value)
+        assert(value>=self.pinned_values[0])
+        assert(value<=self.pinned_values[-1])
+
         # locate which leg this distance is to be found on
-        for i in range(len(self.distances)):
-            if distance<=self.distances[i]:
+        for i in range(len(self.pinned_values)-1):
+            if value<=self.pinned_values[i+1]:
                 # the point is somewhere between vector i and vector i+1
                 break
-            else:
-                distance-=self.distances[i]
+
+        distance = self.distances[i]*(value-self.pinned_values[i])/float(self.pinned_values[i+1]-self.pinned_values[i])
 
         rel_vec = self.colour_vectors[i+1]-self.colour_vectors[i]
         rel_vec = rel_vec/np.linalg.norm(rel_vec)
-        return vector_to_colour(self.colour_vectors[i]+rel_vec*distance)        
+        return vector_to_colour(self.colour_vectors[i]+rel_vec*distance)
 
