@@ -21,7 +21,7 @@ header='''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
      id="defs3725" />
   <sodipodi:namedview
      id="base"
-     pagecolor="#ffffff"
+     pagecolor="{d[bg_colour]}"
      bordercolor="#666666"
      borderopacity="1.0"
      inkscape:pageopacity="0.0"

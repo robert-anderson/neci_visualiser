@@ -1,12 +1,15 @@
 import svg_strings
 import colours
 import numpy as np
+import matrix_factory
+import matrix_utils
 
 class SVG_renderer:
-    def __init__(self, width, height):
+    def __init__(self, width, height, bg_colour=colours.white):
         self.width = width
         self.height = height
-        self.components = [svg_strings.header.format(d={'width':width, 'height':height})]
+        self.bg_colour = bg_colour
+        self.components = [svg_strings.header.format(d={'width':width, 'height':height, 'bg_colour':bg_colour})]
         self.id_counter = 0
 
     def get_new_id(self):
@@ -15,6 +18,8 @@ class SVG_renderer:
 
 
     def add_line(self, x, y, dx, dy, colour=colours.black, width=1):
+        if colour==self.bg_colour:
+            return
         self.components.append(
             svg_strings.line.format(
                 d = {
@@ -53,13 +58,23 @@ class SVG_renderer:
 
 
 
-sr = SVG_renderer(300, 300)
+sr = SVG_renderer(300, 300, bg_colour=colours.black)
 #sr.add_histogram(200, 40, 100, np.random.random(200), bar_width=4, colour=colours.red)
 #sr.add_square(120,120,50, colour='#1123ad')
 #sr.add_square(170,120,50, colour=colours.blue)
-dim = 100
-matrix = np.random.random((dim, dim))-np.random.random((dim, dim))
-print matrix
+dim = 495
+#matrix = np.random.random((dim, dim))-np.random.random((dim, dim))
+#matrix = np.magicrandom.random((dim, dim))-np.random.random((dim, dim))
+#matrix = matrix_factory.random_symmetric(dim)
+matrix = matrix_factory.random_symmetric_blocked([15, 120, 225, 120, 15])
+#matrix = np.linalg.matrix_power(matrix, 4)
+#matrix = reduce(np.dot, (matrix, matrix, matrix, matrix))
+
+
+matrix = matrix_utils.read_hamiltonian('./Se2/dets.dat', './Se2/ham.dat')
+print matrix_utils.check_symmetric(matrix)
+
+#eigs, matrix = np.linalg.eig(matrix)
 #sr.add_heatmap(100,100, 50, matrix, [0,1], [colours.white, colours.blue])
-sr.add_heatmap(100,100,5, matrix, [matrix.min(),0,matrix.max()], [colours.black, colours.yellow, colours.white])
+sr.add_heatmap(100,100,1, matrix, [matrix.min(),1e-2,3e-2,6e-2,matrix.max()], [colours.black, colours.brown, colours.red, colours.orange, colours.white])
 sr.render()
