@@ -37,8 +37,8 @@ class SVG_renderer:
     def add_square(self, x, y, size, colour=colours.black):
         self.add_line(x, y, 0, size, colour=colour, width=size)
 
-    def add_heatmap(self, left, top, square_size, data, pinned_values, colour_list):
-        sh = colours.SmoothHue(pinned_values, colour_list)
+    def add_heatmap(self, left, top, square_size, data, pinned_values, colour_list, logarithmic=False):
+        sh = colours.SmoothHue(pinned_values, colour_list, logarithmic)
         for i in range(data.shape[0]):
             for j in range(data.shape[1]):
                 self.add_square(left+j*square_size, top+i*square_size, square_size, colour=sh.get_colour(data[i,j]))
@@ -58,23 +58,87 @@ class SVG_renderer:
 
 
 
-sr = SVG_renderer(300, 300, bg_colour=colours.black)
+sr = SVG_renderer(300, 300, bg_colour=colours.white)
+#sr = SVG_renderer(300, 300, bg_colour=colours.black)
 #sr.add_histogram(200, 40, 100, np.random.random(200), bar_width=4, colour=colours.red)
-#sr.add_square(120,120,50, colour='#1123ad')
-#sr.add_square(170,120,50, colour=colours.blue)
-dim = 495
-#matrix = np.random.random((dim, dim))-np.random.random((dim, dim))
-#matrix = np.magicrandom.random((dim, dim))-np.random.random((dim, dim))
-#matrix = matrix_factory.random_symmetric(dim)
-matrix = matrix_factory.random_symmetric_blocked([15, 120, 225, 120, 15])
-#matrix = np.linalg.matrix_power(matrix, 4)
-#matrix = reduce(np.dot, (matrix, matrix, matrix, matrix))
-
 
 matrix = matrix_utils.read_hamiltonian('./Se2/dets.dat', './Se2/ham.dat')
 print matrix_utils.check_symmetric(matrix)
 
-#eigs, matrix = np.linalg.eig(matrix)
-#sr.add_heatmap(100,100, 50, matrix, [0,1], [colours.white, colours.blue])
-sr.add_heatmap(100,100,1, matrix, [matrix.min(),1e-2,3e-2,6e-2,matrix.max()], [colours.black, colours.brown, colours.red, colours.orange, colours.white])
+#sr.add_heatmap(100,100,1, matrix, [0.0,1e-2,3e-2,6e-2,matrix.max()], [colours.black, colours.brown, colours.red, colours.orange, colours.white])
+#sr.add_heatmap(100,100,1, matrix, [0.0,1e-2,3e-2,6e-2,1,matrix.max()], [colours.white, colours.grey1, colours.grey2, colours.grey3, colours.grey4, colours.black])
+#sr.add_heatmap(100,100,1, matrix, [0.0,1e-2,3e-2,6e-2,1,matrix.max()], list(reversed([colours.white, colours.grey1, colours.grey2, colours.grey3, colours.grey4, colours.black])))
+
+sr.add_heatmap(100,100,1, matrix,
+        [
+            -6,
+            0,
+        ], 
+        [
+            colours.white,
+            colours.blue
+        ],
+        logarithmic=True
+    )
+
+
+
 sr.render()
+
+'''
+sr.add_heatmap(100,100,1, matrix,
+        [
+            -20,
+            -6,
+            -2,
+            np.log(matrix.max())
+        ], 
+        [
+            colours.white,
+            colours.get_inbetween_colour(colours.white, colours.blue, 0.05),
+            colours.get_inbetween_colour(colours.white, colours.blue, 0.7),
+            colours.blue
+        ],
+        logarithmic=True
+    )
+
+
+
+sr.render()
+'''
+
+'''
+
+        [
+            colours.white,
+            colours.get_inbetween_colour(colours.white, colours.blue, 0.1),
+            colours.get_inbetween_colour(colours.white, colours.blue, 0.2),
+            colours.get_inbetween_colour(colours.white, colours.blue, 0.3),
+            colours.get_inbetween_colour(colours.white, colours.blue, 0.4),
+            colours.get_inbetween_colour(colours.white, colours.blue, 0.5),
+            colours.get_inbetween_colour(colours.white, colours.blue, 0.9),
+            colours.blue
+        ],
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
