@@ -64,6 +64,21 @@ line='''
        inkscape:connector-curvature="0" />
        '''
 
+text='''
+	<text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:{d[fontsize]};line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="{d[x]}"
+       y="{d[y]}"
+       id="text16452"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan16454"
+         x="{d[x]}"
+         y="{d[y]}"
+         style="fill:{d[colour]}">{d[text]}</tspan></text>
+'''
+
 footer='''
   </g>
 </svg>

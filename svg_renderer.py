@@ -3,6 +3,7 @@ import colours
 import numpy as np
 import matrix_factory
 import matrix_utils
+import neci_pops
 
 class SVG_renderer:
     def __init__(self, width, height, bg_colour=colours.white):
@@ -15,6 +16,23 @@ class SVG_renderer:
     def get_new_id(self):
         self.id_counter+=1
         return 'obj_'+str(self.id_counter)
+
+
+    def add_text(self, x, y, fontsize, text, colour=colours.black):
+        if colour==self.bg_colour:
+            return
+        self.components.append(
+            svg_strings.text.format(
+                d = {
+                    'x': x,
+                    'y': y, 
+                    'fontsize': fontsize,
+                    'text': text,
+                    'colour': colour,
+                    'id': self.get_new_id(),
+                }
+            )
+        )
 
 
     def add_line(self, x, y, dx, dy, colour=colours.black, width=1):
@@ -37,11 +55,14 @@ class SVG_renderer:
     def add_square(self, x, y, size, colour=colours.black):
         self.add_line(x, y, 0, size, colour=colour, width=size)
 
-    def add_heatmap(self, left, top, square_size, data, pinned_values, colour_list, logarithmic=False):
+    def add_heatmap(self, left, top, square_size, data, pinned_values, colour_list, logarithmic=False, div_positions=[]):
         sh = colours.SmoothHue(pinned_values, colour_list, logarithmic)
         for i in range(data.shape[0]):
             for j in range(data.shape[1]):
                 self.add_square(left+j*square_size, top+i*square_size, square_size, colour=sh.get_colour(data[i,j]))
+        for div_pos in div_positions:
+            self.add_line(left+square_size*div_pos, top, 0, data.shape[0]*square_size+400, colour=colours.grey1, width=1)
+            self.add_line(left, top+square_size*div_pos, data.shape[0]*square_size, 0, colour=colours.grey1, width=1)
 
 
     def add_histogram(self, left, bottom, height, data, bar_width=1, max_val=None, divs=[], colour=colours.black):
@@ -59,17 +80,18 @@ class SVG_renderer:
 
 
 sr = SVG_renderer(300, 300, bg_colour=colours.white)
-#sr = SVG_renderer(300, 300, bg_colour=colours.black)
-#sr.add_histogram(200, 40, 100, np.random.random(200), bar_width=4, colour=colours.red)
 
-matrix = matrix_utils.read_hamiltonian('./Se2/dets.dat', './Se2/ham.dat')
-print matrix_utils.check_symmetric(matrix)
+matrix, det_map, sector_offsets = matrix_utils.read_hamiltonian('./Se2/dets.dat', './Se2/ham.dat', zero_coupling=False)
 
-#sr.add_heatmap(100,100,1, matrix, [0.0,1e-2,3e-2,6e-2,matrix.max()], [colours.black, colours.brown, colours.red, colours.orange, colours.white])
-#sr.add_heatmap(100,100,1, matrix, [0.0,1e-2,3e-2,6e-2,1,matrix.max()], [colours.white, colours.grey1, colours.grey2, colours.grey3, colours.grey4, colours.black])
-#sr.add_heatmap(100,100,1, matrix, [0.0,1e-2,3e-2,6e-2,1,matrix.max()], list(reversed([colours.white, colours.grey1, colours.grey2, colours.grey3, colours.grey4, colours.black])))
 
-sr.add_heatmap(100,100,1, matrix,
+'''
+E, V = matrix_utils.get_eigvals(matrix, a=0, b=3)
+
+print E
+matrix_utils.print_highest_weighted_dets(V, det_map, 0.2)
+'''
+
+sr.add_heatmap(100,40,1, matrix,
         [
             -6,
             0,
@@ -78,12 +100,30 @@ sr.add_heatmap(100,100,1, matrix,
             colours.white,
             colours.blue
         ],
-        logarithmic=True
+        logarithmic=True,
+        div_positions=sector_offsets+[matrix.shape[0]]
     )
 
 
+neci_pops_data = neci_pops.get_all_neci_pops('Se2/inst_pops', det_map, magnitude=True)
 
+istate=0
+#for i in range(len(neci_pops_data[istate,0,:])):
+#    if neci_pops_data[istate,0,:][i]!=0:
+#        print i, det_map[i], neci_pops_data[istate,0,:][i]
+
+iteration=neci_pops_data.shape[1]-1
+
+#iteration = 1
+
+for istate in [0,1,2]:
+    sr.add_histogram(100,620+(2-istate)*100,80, neci_pops_data[istate,iteration,:])
+
+sr.add_text(280,25, '20px', 'iteration {}'.format(iteration*100), colour=colours.black)
 sr.render()
+
+assert(0)
+
 
 '''
 sr.add_heatmap(100,100,1, matrix,

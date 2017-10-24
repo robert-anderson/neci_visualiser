@@ -37,7 +37,7 @@ def colour_to_vector(colour):
     return np.array(tuple(int(colour[1:][2*i:2*i+2], base=16) for i in range(3)))
 
 def vector_to_colour(vector):
-    return '#'+''.join( tuple( pad_number(hex(int(round(vector[i]))))[2:] for i in range(len(vector))))
+    return '#'+''.join( tuple( pad_number(hex(int(round(abs(vector[i])))))[2:] for i in range(len(vector))))
 
 class SmoothHue:
     def __init__(self, pinned_values, colours, logarithmic=False):
