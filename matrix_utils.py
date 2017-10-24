@@ -77,6 +77,7 @@ def read_hamiltonian(dets_file, ham_file, rearrange=True, magnitude=True, zero_c
         spin_sector = nsectors/2+spin_sector/2
 
         det_pos = sector_offsets[spin_sector]+sector_counts[spin_sector]
+        print det_pos
         det_map[det_pos] = det
         sector_counts[spin_sector]+=1
         rearrangement_map[i] = det_pos

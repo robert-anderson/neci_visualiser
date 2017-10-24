@@ -3,8 +3,11 @@ import numpy as np
 red =        '#ff0000'
 green =      '#00ff00'
 blue =       '#0000ff'
+cyan =       '#00ffff'
+magenta =       '#ff00ff'
 lightblue =  '#81F0FF'
-yellow =     '#FFF63D'
+#yellow =     '#FFF63D'
+yellow =     '#FFFF00'
 orange =     '#FF711A'
 brown =      '#732C00'
 

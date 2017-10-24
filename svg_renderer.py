@@ -78,8 +78,30 @@ class SVG_renderer:
             f.write(''.join(self.components))
 
 
+def get_phase_colour(theta):
+	n = 420
+	i = int(n*theta/(2*np.pi))
+	#colour_list = [colours.blue, colours.cyan, colours.green, colours.orange, colours.red]
+	#colour_list = [colours.blue, colours.magenta, colours.red]
+	colour_list = [colours.blue, colours.cyan, colours.green]
+	colour_list+=list(reversed(colour_list))
+	colour_sector = i/(n/(len(colour_list)-1))
+	return colours.get_inbetween_colour(colour_list[colour_sector], colour_list[colour_sector+1],
+				float(i%(n/(len(colour_list)-1)))/(n/(len(colour_list)-1)))
 
 sr = SVG_renderer(300, 300, bg_colour=colours.white)
+r = 80
+cx, cy = 200, 200
+n = 1400
+for i in range(n):
+	sr.add_square(cx+r*np.cos(2*i*np.pi/n), cy+r*np.sin(2*i*np.pi/n),
+			2, colour=get_phase_colour(2*i*np.pi/n))
+	#sr.add_line(cx, cy, r*np.cos(2*i*np.pi/n), r*np.sin(2*i*np.pi/n),
+#			width=1, colour=get_phase_colour(2*i*np.pi/n))
+
+sr.render()
+
+assert(0)
 
 matrix, det_map, sector_offsets = matrix_utils.read_hamiltonian('./Se2/dets.dat', './Se2/ham.dat', zero_coupling=False)
 
