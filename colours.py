@@ -81,3 +81,12 @@ class SmoothHue:
         rel_vec = rel_vec/np.linalg.norm(rel_vec)
         return vector_to_colour(self.colour_vectors[i]+rel_vec*distance)
 
+def get_phase_colour(theta):
+	n = 420
+	i = int(n*theta/(2*np.pi))
+	colour_list = [red, magenta, blue, cyan, green, yellow]
+        colour_list.append(colour_list[0])
+	#colour_list+=list(reversed(colour_list))
+	colour_sector = i/(n/(len(colour_list)-1))
+	return get_inbetween_colour(colour_list[colour_sector], colour_list[colour_sector+1],
+				float(i%(n/(len(colour_list)-1)))/(n/(len(colour_list)-1)))
