@@ -23,10 +23,14 @@ def get_all_neci_pops(directory, det_map, magnitude=False):
                 time_step = iteration
             data_length+=1
 
-    data = np.zeros((3, data_length, len(det_map)))
+    if magnitude:
+        data = np.zeros((3, data_length, len(det_map)))
+    else:
+        print (3, data_length, len(det_map))
+        data = np.zeros((3, data_length, len(det_map)), dtype=np.complex_)
 
     for proc_data in all_proc_data:
-        iteration_id = -1
+      	iteration_id = -1
         for i in range(len(proc_data)):
             if 'iter' in proc_data[i]:
                 iteration_id += 1

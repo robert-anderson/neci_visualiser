@@ -58,7 +58,7 @@ def read_hamiltonian(dets_file, ham_file, rearrange=True, magnitude=True, zero_c
 
     sector_sizes = [0]*nsectors
     sector_counts = [0]*nsectors
-    ham_dim = int(scipy.misc.comb(norbs, nelec))
+    ham_dim = int(round(scipy.misc.comb(norbs, nelec)))
 
     for i in range(nsectors/2+1):
         tmp = int(scipy.misc.comb(norbs/2, nelec/2+i)*scipy.misc.comb(norbs/2, nelec/2-i))
@@ -77,7 +77,6 @@ def read_hamiltonian(dets_file, ham_file, rearrange=True, magnitude=True, zero_c
         spin_sector = nsectors/2+spin_sector/2
 
         det_pos = sector_offsets[spin_sector]+sector_counts[spin_sector]
-        print det_pos
         det_map[det_pos] = det
         sector_counts[spin_sector]+=1
         rearrangement_map[i] = det_pos
